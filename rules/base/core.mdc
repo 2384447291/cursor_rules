@@ -1,0 +1,90 @@
+---
+description: 项目通用规则（Base/Core）
+globs:
+alwaysApply: true
+---
+
+# 项目通用规则
+
+- 始终使用中文回复用户，但技术专有名词可保留英文（如 API、Python、DTO 等）。
+- 使用项目既有风格，不引入新风格，包括代码、文档或交互；默认延用项目中已有的格式、缩进、命名习惯。
+- 禁止无效寒暄、过度铺垫，只输出对当前任务有直接帮助的信息。
+- 如果有任何你不确定的，务必先问我或查找代码确认，绝不自行推断。
+- 若其他规则与本文件冲突，以本文件（项目通用规则）为最高优先级。
+
+# Rules 文件夹架构
+
+- `base/`：跨项目恒定规则（对所有项目都成立）
+- `mode/`：对话工作方式（怎么回答、怎么推进、怎么验证）
+- `project/`：项目"实干"规则（工具链、语言、目录、构建/烧录/运行、平台约束等），**同一套模式在不同项目下的具体落地细节**都放这里
+
+## 目录结构
+
+```
+.cursor/rules/
+├── base/
+│   └── core.mdc        # 通用规则 + rules 框架（本文件）
+
+├── mode/
+│   ├── general.mdc     # mode 目录用途说明（先读）
+│   ├── ask.mdc         # ASK 模式细则（只读解释，不落地实现）
+│   ├── build.mdc       # BUILD 模式细则（先规划再实现）
+│   └── debug.mdc       # DEBUG 模式细则（证据链排查→修复→验证）
+
+└── project/
+    ├── general.mdc     # project 目录用途说明（先读）
+    └── ...             # 项目特化规则
+```
+
+# 会话固定流程
+
+## 第一步：读取 general.mdc
+
+按以下顺序读取各目录的 `general.mdc`，了解每个文件夹的用途、边界、优先级与取用方式：
+
+1. `.cursor/rules/base/general.mdc`
+2. `.cursor/rules/mode/general.mdc`
+3. `.cursor/rules/project/general.mdc`
+
+## 第二步：处理 overview.mdc
+
+- 检查 `.cursor/rules/project/overview.mdc` 是否存在：
+  - **若存在**：读取该文件，了解项目整体概况
+  - **若不存在**：生成该文件
+- **项目整体情况的范围限定**：
+  - 仅包含项目根目录下与 `.cursor/rules` 同级的核心组件目录
+  - 这些目录与 `.cursor/rules` 的相对位置关系为：**同属项目根目录的直接子目录**
+  - **不包括**：`.cursor/rules` 内部的其他规则文件（如 base/、mode/、project/ 下的具体规则）
+  - 尽可能的详细获取每个文件夹的作用
+- 此步骤在模式判断之前执行
+
+## 第三步：判断 Session 模式
+
+- 根据用户入口消息判断当前会话应使用哪种模式：
+  - **ASK**：读代码 / 解释概念 / 帮你看懂现有实现
+  - **BUILD**：写功能 / 改需求 / 重构实现
+  - **DEBUG**：排查 bug / 定位异常 / 性能分析 / 回归问题
+- 模式选择规则详见 `.cursor/rules/mode/general.mdc`
+
+## 第四步：根据模式执行任务
+
+- 加载对应的 mode 文件：
+  - `.cursor/rules/mode/ask.mdc`
+  - `.cursor/rules/mode/build.mdc`
+  - `.cursor/rules/mode/debug.mdc`
+- 按该模式的规则完成用户任务
+
+# mdc 文件生成约定
+
+- 所有生成的 `.mdc` 文件**必须**在文件开头包含以下元数据：
+  ```yaml
+  ---
+  alwaysApply: false
+  ---
+  ```
+- 例外：
+  - `.cursor/rules/base/general.mdc` - 无需添加
+  - `.cursor/rules/base/core.mdc` - 无需添加（本身就是 alwaysApply: true）
+- 是否生效由以下规则判断：
+  - `.cursor/rules/mode/general.mdc` - 模式选择规则
+  - `.cursor/rules/base/core.mdc` - 通用规则判断

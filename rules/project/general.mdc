@@ -1,0 +1,13 @@
+---
+alwaysApply: true
+---
+# project/ 是做什么的
+
+- `project/` 用来存放“实干型”的项目特化规则（每个项目不一样），例如：语言选择、工具链、构建/运行/部署流程、产物校验、平台约束等。
+- 推荐按项目名建子目录：`.cursor/rules/project/<project-name>/...`，再按需要继续细分（lang/toolchain/workflow/等）。
+
+# Project 规则加载（Project Rules Loader）
+
+- 使用 `project/` 下规则前，必须先读取本文件：`.cursor/rules/project/general.mdc`。
+- 然后加载所有`project/`文件夹下的其他所有的规则
+
